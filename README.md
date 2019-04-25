@@ -13,6 +13,7 @@
   - ECMAScriptとは
   - ES5 vs ES6
   - ブラウザサポート
+  - Vanilla JavaScript
   - ブラウザでJavaScriptを使ってみよう
   - RailsアプリでJavaScriptを導入してみよう
 - jQuery
@@ -31,9 +32,9 @@
   - Vue
 - MPA vs SPA
 - Rails + VueでMPAを作ってみよう
-- Rails + VueでSPAを作ってみよう
+- Nuxt.jsでSPAを作ってみよう
   - ルーティング
-  - 状態管理
+  - 状態管理(時間あれば)
 
 (おまけ)
 
@@ -55,17 +56,21 @@
 
 
 
-
-
 ### ECMAScriptとは
+
+JavaScriptの標準規格。今は大体ES6に各ブラウザが対応している。
+
+
+
+### ES5 vs ES6
+
+<https://qiita.com/rifutan/items/a55f132d4dae7e2f1941>
+
+
 
 
 
 ### ブラウザサポート
-
-
-
-
 
 http://kangax.github.io/compat-table/es6/
 
@@ -364,7 +369,218 @@ ES6/ES7などで書かれたコードをES5に変換するトランスパイル�
 
 
 
+## JSフレームワーク
+
+<https://codesandbox.io/>
+
+
+
+## React
+
+フロントエンドといえばReact。Facebookとオープソースのコミュニティで開発されている。
+
+立ち位置としてはあくまでライブラリで、実はフレームワークではない。
+
+そのため、自由にカスタマイズして使え、大規模な場合は設計を間違えると大変ですので、上級者向けな気がします。
+
+成熟度は高く、周辺ツールは多く存在します。
+
+
+
+## Angular
+
+Google製。
+
+TypeScript標準など、学習コストは高めだが、堅牢なアプリケーションを作ることができる。
+
+Angularのレールにのって開発できるので、設計に悩まない。
+
+Googleさんが周辺ツールを色々用意してくれてるので、サポートは手厚いです。
+
+
+
+## Vue
+
+作者はEven You (元Google)のオープソースのコミュニティで開発されているフレームワーク。
+
+軽量(と言われている)で学習コストも低め。最近かなり人気。
+
+VueのラッパーのNuxt.jsをつかえば規約にのっとった開発ができる。
+
+
+
 ## MPA vs SPA
 
 [https://scrapbox.io/vue-yawaraka/SPA%E3%81%A8MPA%E3%81%A3%E3%81%A6%E4%BD%95%E3%81%8C%E9%81%95%E3%81%86%E3%81%AE%EF%BC%9FSPA%E3%81%AB%E3%81%97%E3%81%9F%E3%81%BB%E3%81%86%E3%81%8C%E3%81%84%E3%81%84%EF%BC%9F](https://scrapbox.io/vue-yawaraka/SPAとMPAって何が違うの？SPAにしたほうがいい？)
+
+
+
+
+
+### Rails + VueでMPAを作ってみよう
+
+
+
+### 1. webpackerを導入
+
+
+
+- Gemfileに `gem 'webpacker', '~> 4.x'` を追加、`bundle install` 
+- `rails webpacker:install:vue` を実行
+
+
+
+### 2. VueでDOMを描画してみよう
+
+
+
+- todos/index/html.erbに `<%= javascript_pack_tag 'hello_vue' %>` を追加。
+- 適当なところに `<hello></hello>` を追加。
+- 別ターミナルで `bin/webpack-dev-server` でサーバー起動
+
+
+
+### 3. コンポーネントを作成してみよう
+
+
+
+以下のようなTodoList.vueを作成してみます。
+
+
+
+```vue
+<template>
+  <div>
+    <tr v-for="todo in todos" :key="todo.id">
+      <td>{{ todo.title }}</td>
+      <td>{{ todo.body }}</td>
+      <td>
+        <a :href="`/todos/${todo.id}`">Show</a>
+      </td>
+      <td></td>
+        <a :href="`/todos/${todo.id}/edit`">Edit</a>
+      </td>
+      <td>
+        <a data-confirm="Are you sure?" rel="nofollow" data-method="delete" :href="`/todos/${todo.id}`">Destroy</a>
+      </td>
+    </tr>
+  </div>
+</template>
+
+<script>
+export default {
+  data: function() {
+    return {
+      todos: []
+    };
+  },
+  created () {
+    $.get("todos.json", { title: '' }, data => {
+      this.todos = data
+    })
+  }
+};
+</script>
+
+<style scoped>
+</style>
+
+```
+
+
+
+todos/index.hyml
+
+
+
+```html
+<p id="notice"><%= notice %></p>
+
+<h1>Todos</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Body</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <todo-list></todo-list>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Todo', new_todo_path %>
+<%= javascript_pack_tag 'todo_list' %>
+
+```
+
+
+
+エントリファイルを作成
+
+todo_list.js
+
+
+
+```js
+import Vue from 'vue'
+import App from '../TodoList.vue'
+
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.body.appendChild(document.createElement('todo-list'))
+  const app = new Vue({
+    el,
+    render: h => h(App)
+  })
+})
+```
+
+
+
+## Challenge2: 検索機能を追加しよう
+
+jQueryで実装したような検索機能を実装してみよう。
+
+
+
+<https://vuejs.org/v2/guide/forms.html>
+
+
+
+
+
+
+
+## Nuxt.jsでSPAを作ってみよう
+
+
+
+- `yarn create nuxt-app my-app` 
+- `cd my-app`
+- `yarn run dev -p 3000 -H 0.0.0.0`
+
+
+
+### ディレクトリ構造
+
+<https://ja.nuxtjs.org/guide/directory-structure>
+
+
+
+### ルーティング
+
+<https://ja.nuxtjs.org/guide/routing>
+
+
+
+### 状態管理
+
+<https://ja.nuxtjs.org/guide/vuex-store>
+
+
 
