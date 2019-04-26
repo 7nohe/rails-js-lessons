@@ -105,7 +105,6 @@ document.getElementsByTagName('h2')[0].innerText = 'hoge'
 
 #### 1. 環境構築
 
-- /vanilla-jsへ移動
 - `docker-compose up -d`
 
 
