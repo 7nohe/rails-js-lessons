@@ -1,7 +1,12 @@
 # フロントエンド入門
 
+## 準備
 
-
+```
+$ git clone https://github.com/7nohe/rails-js-lessons.git
+$ cd rails-js-lessons
+$ docker-compose up -d
+```
 
 
 ## アジェンダ
